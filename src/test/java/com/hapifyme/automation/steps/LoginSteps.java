@@ -9,6 +9,7 @@ import com.hapifyme.automation.utils.BrowserUtils;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.Assert;
 
 public class LoginSteps {
 
@@ -19,9 +20,7 @@ public class LoginSteps {
 
     @Given("I open the browser")
     public void iOpenTheBrowser() {
-        // Selenide deschide browserul automat la prima comandă 'open',
-        // dar putem face o deschidere explicită dacă e nevoie.
-        // Hooks @Before a configurat deja driverul.
+        // Browser is managed by Hooks, dar putem face un check aici
     }
 
     // --- SCENARIUL 1: UI CLASIC ---
@@ -34,9 +33,7 @@ public class LoginSteps {
     @When("I enter valid credentials")
     public void iEnterValidCredentials() {
         String email = ConfigManager.getInstance().getString("valid.email");
-        // Fallback dacă nu e în config
         if(email == null) email = "student_qa@mail.com";
-
         String password = ConfigManager.getInstance().getString("valid.password");
 
         loginPage.login(email, password);
@@ -46,31 +43,32 @@ public class LoginSteps {
 
     @Given("I am logged in via API authentication")
     public void iAmLoggedInViaApiAuthentication() {
-        // 1. Deschidem pagina de login pentru a inițializa driverul și contextul
         loginPage.open();
-
-        // 2. Pregătim datele
         String email = ConfigManager.getInstance().getString("valid.email");
         if(email == null) email = "student_qa@mail.com";
         String password = ConfigManager.getInstance().getString("valid.password");
-
-        // 3. Extragem User-Agent real (Tehnica Spoofing din Cap 2)
         String userAgent = BrowserUtils.getUserAgent();
 
-        // 4. Obținem cookie-ul prin API
-        System.out.println("Attempting Hybrid Login for: " + email);
         String sessionCookie = authClient.getWebSessionCookie(email, password, userAgent);
+        if (sessionCookie == null) throw new RuntimeException("API Login failed!");
 
-        if (sessionCookie == null) {
-            throw new RuntimeException("API Login failed! Cookie is null.");
-        }
-
-        // 5. Injectăm cookie-ul
         BrowserUtils.injectSessionCookie("PHPSESSID", sessionCookie);
+        Selenide.open(ConfigManager.getInstance().getString("base.url.ui") + "/index.php");
+    }
 
-        // 6. Navigăm la pagina protejată (Index)
-        String baseUrl = ConfigManager.getInstance().getString("base.url.ui");
-        Selenide.open(baseUrl + "/index.php");
+    // --- SCENARIUL 3: DATA DRIVEN TESTING (NEGATIVE) ---
+
+    @When("I attempt to login with {string} and {string}")
+    public void iAttemptToLoginWithAnd(String email, String password) {
+        // Folosim parametrii primiți din tabelul Examples din .feature
+        loginPage.login(email, password);
+    }
+
+    @Then("I should see the error message {string}")
+    public void iShouldSeeTheErrorMessage(String expectedError) {
+        String actualError = loginPage.getErrorMessage();
+        // Folosim JUnit Assert pentru verificare
+        Assert.assertEquals("Mesajul de eroare nu corespunde!", expectedError, actualError);
     }
 
     // --- VERIFICĂRI COMUNE ---
