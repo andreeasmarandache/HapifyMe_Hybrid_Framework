@@ -51,4 +51,7 @@ jobs:
       if: always()
       with:
         name: cucumber-report
-        path: target/cucumber-report.html
+        path: |
+          **/target/cucumber-report.html
+          **/target/cucumber-report*.html
+    
