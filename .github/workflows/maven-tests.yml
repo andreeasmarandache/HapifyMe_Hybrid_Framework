@@ -1,0 +1,54 @@
+name: Automated Regression Suite
+
+# Când rulăm?
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # Permite rularea manuală din interfața GitHub
+  workflow_dispatch:
+
+# PERMISIUNI NECESARE (FIX PENTRU EROAREA "Resource not accessible")
+permissions:
+  checks: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Luăm codul din repo
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Configurăm Java 17
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    # 3. Rulăm testele
+    # Folosim profilul headless și continuăm chiar dacă testele pică (pentru a genera raportul)
+    - name: Run Tests with Maven
+      run: mvn clean test -Dheadless=true
+      continue-on-error: true
+
+    # 4. Publicăm rezultatele (JUnit Reports)
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v4
+      if: always() # Rulează chiar dacă pasul anterior a eșuat
+      with:
+        report_paths: '**/target/surefire-reports/TEST-*.xml'
+        
+    # 5. Arhivăm raportul HTML Cucumber (dacă există)
+    - name: Upload Cucumber Report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cucumber-report
+        path: target/cucumber-report.html
