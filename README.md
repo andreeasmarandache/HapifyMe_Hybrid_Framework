@@ -1,12 +1,12 @@
 # HapifyMe Hybrid Automation Framework
 
-A hybrid automation framework combining **UI testing (Selenide)** and **API testing (Rest-Assured)**, designed to demonstrate a real-world enterprise automation strategy.
+A hybrid automation framework combining UI testing (Selenide) and API testing (Rest-Assured), designed to demonstrate a real-world enterprise automation strategy.
 
 This project showcases how API and UI automation can work together to optimize test execution speed, reliability, and architecture scalability.
 
 ---
 
-## 🎯 Project Objective
+## Project Objective
 
 The purpose of this framework is to demonstrate:
 
@@ -33,29 +33,29 @@ The purpose of this framework is to demonstrate:
 
 ---
 
-## 🏗 Architecture Overview
+## Architecture Overview
 
 This framework follows a layered structure inside:
 
-`src/test/java/com/hapifyme/automation`
+src/test/java/com/hapifyme/automation
 
-### 🔹 API Layer
+### API Layer
 
 Handles backend authentication and session management.
 
-- `AuthClient.java` – performs API authentication
-- `LoginResponse.java` – maps API response
-- `User.java` – user model
+- AuthClient.java – performs API authentication
+- LoginResponse.java – maps API response
+- User.java – user model
 - Cookie extraction logic for hybrid login
 
-### 🔹 UI Layer (Page Objects)
+### UI Layer (Page Objects)
 
-- `LoginPage.java`
-- `HomePage.java`
+- LoginPage.java
+- HomePage.java
 
 Implements Page Object Model for maintainability and readability.
 
-### 🔹 Hybrid Logic
+### Hybrid Logic
 
 The hybrid login flow:
 
@@ -73,6 +73,7 @@ This reduces UI login time and improves test stability.
 
 ## Project Structure
 
+```
 HapifyMe_Hybrid_Framework/
 ├── .github/
 ├── .idea/
@@ -95,14 +96,15 @@ HapifyMe_Hybrid_Framework/
 │   │       └── config.properties
 ├── .gitignore
 └── pom.xml
+```
 
 ---
 
 ## Implemented Test Scenarios
 
-### 1️⃣ Classic UI Login (JUnit)
+### Classic UI Login (JUnit)
 
-`HybridSmokeTest.testLoginClasic()`
+HybridSmokeTest.testLoginClasic()
 
 - Opens browser
 - Reads credentials from config
@@ -111,9 +113,9 @@ HapifyMe_Hybrid_Framework/
 
 ---
 
-### 2️⃣ Hybrid Login (API + UI)
+### Hybrid Login (API + UI)
 
-`HybridSmokeTest.testLoginHibrid()`
+HybridSmokeTest.testLoginHibrid()
 
 - Opens browser
 - Extracts real User-Agent
@@ -127,11 +129,11 @@ Demonstrates backend-driven UI authentication.
 
 ---
 
-### 3️⃣ Cucumber BDD Scenarios
+### Cucumber BDD Scenarios
 
 Located in:
 
-`src/test/resources/features/Login.feature`
+src/test/resources/features/Login.feature
 
 Includes:
 
@@ -150,11 +152,11 @@ Example negative scenario logic:
 
 Configuration values are stored in:
 
-`config.properties`
+config.properties
 
 Managed via:
 
-`ConfigManager.java`
+ConfigManager.java
 
 Example properties:
 - base.url.ui
@@ -163,7 +165,7 @@ Example properties:
 
 ---
 
-## ▶️ How to Run the Tests
+## How to Run the Tests
 
 Run the full test suite:
 
